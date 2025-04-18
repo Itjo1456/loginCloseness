@@ -17,6 +17,7 @@ class TokenManager @Inject constructor(
     // "auth_prefs"라는 이름의 전용 저장소(SharedPreferences)를 가져와서, 이후 prefs 변수로 토큰을 읽고 쓰도록 준비하는 것
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+    // 로그인 데이터 저장
     fun saveLoginData(token: String, refreshToken: String, userName: String, userId: Long) {
         prefs.edit()
             .putString("access_token", token)

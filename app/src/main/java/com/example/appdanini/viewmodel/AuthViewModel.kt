@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appdanini.data.model.repository.AuthRepository
 import com.example.appdanini.data.model.request.LoginResponse
+import com.example.appdanini.data.model.request.SignupResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +28,9 @@ class AuthViewModel @Inject constructor(
 
     private val _loginResponse = MutableLiveData<LoginResponse?>()
     val loginResponse: LiveData<LoginResponse?> = _loginResponse
+
+    private val _signResponse = MutableLiveData<SignupResponse?>()
+    val signResponse: LiveData<SignupResponse?> = _signResponse
 
     fun login(email: String, password: String) {
         viewModelScope.launch {

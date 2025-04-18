@@ -83,14 +83,6 @@ class LoginFragment : Fragment() {
                 Log.d("LoginFragment", "유저 이름: ${response.userName}")
                 Log.d("LoginFragment", "유저 ID: ${response.userId}")
 
-                tokenManager.saveLoginData(
-
-                    response.token,
-                    response.refreshToken,
-                    response.userName,
-                    response.userId
-                )
-
                 val action = LoginFragmentDirections.actionLoginFragmentToHomeFragment()
                 findNavController().navigate(action)
             } else {

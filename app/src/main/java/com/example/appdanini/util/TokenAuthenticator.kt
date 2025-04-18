@@ -43,7 +43,6 @@ class TokenAuthenticator @Inject constructor(
     }
 }
 
-
 //서버에 401 응답이 오면 → TokenAuthenticator.authenticate() 호출
 //이미 Authorization 헤더 있으면 → 중지
 //RefreshToken으로 새 AccessToken 요청

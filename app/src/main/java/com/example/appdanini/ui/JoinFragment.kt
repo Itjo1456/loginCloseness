@@ -1,10 +1,12 @@
 package com.example.appdanini.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
@@ -58,6 +60,27 @@ class JoinFragment : Fragment() {
         binding.btJoginNext.setOnClickListener {
             val userName = binding.etName.text.toString()
             val email = binding.etEmail.text.toString()
+            val password = binding.etPassword.text.toString()
+
+            if (email.isBlank() || password.isBlank()) {
+                Toast.makeText(requireContext(), "이메일과 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+
+                authViewModel.signup(userName, email, password)
+            }
+
+            authViewModel.signResponse.observe(viewLifecycleOwner){response ->
+                if(response != null){
+                    Log.d("JoinFragment", "로그인 응답 전체: $response")
+                    Log.d("JoinFragment", "메세지: ${response.message}")
+                    Log.d("JoinFragment", "유저명: ${response.userName}")
+                    Log.d("JoinFragment", "토큰: ${response.token}")
+                    Log.d("JoinFragment", "리프레시 토큰: ${response.refreshToken}")
+                    Log.d("JoinFragment", "초대 코드: ${response.inviteUrl}")
+
+
+                }
+            }
 
         }
 
