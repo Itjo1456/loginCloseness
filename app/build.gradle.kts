@@ -6,7 +6,9 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")  // Hilt 플러그인 적용
-    id("com.google.devtools.ksp")        // KSP 플러그인 적용
+    id("kotlin-kapt") // 꼭 추가!       // KSP 플러그인 적용
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -71,7 +73,8 @@ dependencies {
 
     // Hilt DI
     implementation("com.google.dagger:hilt-android:2.56.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.56.1")
+    implementation(libs.firebase.messaging.ktx)
+    kapt("com.google.dagger:hilt-compiler:2.56.1")
 
     implementation(libs.androidx.browser)
 
@@ -79,4 +82,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //FirbaseMessaging
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation ("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
+
 }

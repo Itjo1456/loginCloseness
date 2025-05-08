@@ -4,24 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/auth_navigation_graph"
     app:startDestination="@id/introFragment">
-
-    <fragment
-        android:id="@+id/joinFragment"
-        android:name="com.example.appdanini.ui.JoinFragment"
-        android:label="fragment_join"
-        tools:layout="@layout/fragment_join" />
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.appdanini.ui.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
-        <action
-            android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
     <fragment
         android:id="@+id/introFragment"
-        android:name="com.example.appdanini.ui.IntroFragment"
+        android:name="com.example.appdanini.ui.auth.IntroFragment"
         android:label="fragment_intro"
         tools:layout="@layout/fragment_intro" >
         <action
@@ -30,6 +15,90 @@
         <action
             android:id="@+id/action_introFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.appdanini.ui.auth.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_inviteFragment"
+            app:destination="@id/inviteFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_waitInviteFragment"
+            app:destination="@id/waitInviteFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_closenessFragment"
+            app:destination="@id/closenessFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/joinFragment"
+        android:name="com.example.appdanini.ui.auth.JoinFragment"
+        android:label="fragment_join"
+        tools:layout="@layout/fragment_join" >
+        <action
+            android:id="@+id/action_joinFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inviteFragment"
+        android:name="com.example.appdanini.ui.invite.InviteFragment"
+        android:label="fragment_invite"
+        tools:layout="@layout/fragment_invite" >
+        <action
+            android:id="@+id/action_inviteFragment_to_waitInviteFragment"
+            app:destination="@id/waitInviteFragment" />
+        <action
+            android:id="@+id/action_inviteFragment_to_familyNameFragment"
+            app:destination="@id/familyNameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/waitInviteFragment"
+        android:name="com.example.appdanini.ui.invite.WaitInviteFragment"
+        android:label="fragment_wait_invite"
+        tools:layout="@layout/fragment_wait_invite" >
+        <action
+            android:id="@+id/action_waitInviteFragment_to_closenessFragment"
+            app:destination="@id/closenessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/familyNameFragment"
+        android:name="com.example.appdanini.ui.invite.FamilyNameFragment"
+        android:label="fragment_family_name"
+        tools:layout="@layout/fragment_family_name" >
+        <action
+            android:id="@+id/action_familyNameFragment_to_inviteCodeFragment2"
+            app:destination="@id/inviteCodeFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/inviteCodeFragment2"
+        android:name="com.example.appdanini.ui.invite.InviteCodeFragment"
+        android:label="fragment_invite_code"
+        tools:layout="@layout/fragment_invite_code" >
+        <action
+            android:id="@+id/action_inviteCodeFragment2_to_closenessFragment"
+            app:destination="@id/closenessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/closenessFragment"
+        android:name="com.example.appdanini.ui.closeness.ClosenessFragment"
+        android:label="fragment_closeness"
+        tools:layout="@layout/fragment_closeness" >
+        <action
+            android:id="@+id/action_closenessFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.appdanini.ui.closeness.ResultFragment"
+        android:label="fragment_result"
+        tools:layout="@layout/fragment_result" >
+        <action
+            android:id="@+id/action_resultFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"

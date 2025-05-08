@@ -1,7 +1,6 @@
 package com.example.appdanini.util
 
-import com.example.appdanini.data.model.remote.TokenManager
-import com.example.appdanini.data.model.remote.network.AuthApi
+import com.example.appdanini.data.model.remote.api.AuthApi
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -13,7 +12,7 @@ import dagger.Lazy
 
 class TokenAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
-    private val authApi: Lazy<AuthApi> // ✅ Lazy 주입
+    private val authApi: Lazy<AuthApi> // ✅ Lazy 주입 // 이게 곧 authapi 인터페이스를 구현한 레트로핏 객체
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -23,9 +22,9 @@ class TokenAuthenticator @Inject constructor(
             try {
                 val result = authApi.get().refreshAccessToken("Bearer $refreshToken")
                 if (result.isSuccessful) {
-                    val newToken = result.body()?.token ?: return@runBlocking null
-                    val newRefreshToken = result.body()?.refreshToken ?: refreshToken
-                    tokenManager.saveTokensOnly(newToken, newRefreshToken)
+                    val newToken = result.headers()["Authorization"]?.removePrefix("Bearer ")
+                        ?: return@runBlocking null
+                    tokenManager.saveTokensOnly(newToken, refreshToken)
                     return@runBlocking newToken
                 } else {
                     tokenManager.setForceLogout(true)
@@ -42,7 +41,6 @@ class TokenAuthenticator @Inject constructor(
             .build()
     }
 }
-
 //서버에 401 응답이 오면 → TokenAuthenticator.authenticate() 호출
 //이미 Authorization 헤더 있으면 → 중지
 //RefreshToken으로 새 AccessToken 요청
