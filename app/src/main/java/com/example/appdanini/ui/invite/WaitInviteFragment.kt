@@ -34,6 +34,7 @@ class WaitInviteFragment : Fragment() {
     private var pollingJob: Job? = null
 
     @Inject
+
     lateinit var tokenManager: TokenManager
 
     override fun onCreateView(
