@@ -57,6 +57,10 @@ class FamilyNameFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // 중복 클릭 방지
+            binding.btNameChk.isEnabled = false
+
+            // 가족명을 저장
             tokenManager.saveFamilyname(familyName)
             Toast.makeText(requireContext(), "가족 이름 저장 완료: $familyName", Toast.LENGTH_SHORT).show()
 
@@ -64,8 +68,11 @@ class FamilyNameFragment : Fragment() {
             authViewModel.requestInviteCode(familyName)
         }
 
-        // 초대 코드 응답 수신 후 다음 화면 이동
+// 초대 코드 응답 수신 후 다음 화면 이동
         authViewModel.inviteCode.observe(viewLifecycleOwner) { code ->
+            // 버튼 다시 활성화
+            binding.btNameChk.isEnabled = true
+
             if (!code.isNullOrBlank()) {
                 Toast.makeText(requireContext(), "초대 코드 생성 완료: $code", Toast.LENGTH_SHORT).show()
                 tokenManager.saveInviteCode(code)

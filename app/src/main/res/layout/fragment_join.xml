@@ -12,6 +12,7 @@
         android:id="@+id/toolbar_Join"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:titleCentered="true"
         app:layout_constraintBaseline_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -126,6 +127,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="40dp"
         android:text="확인"
+
         android:enabled="true"
         android:background="@drawable/button_background_intro"
         style="@style/Button_Title"

@@ -45,12 +45,21 @@ class JoinFragment : Fragment() {
 
         // ✅ 중복 확인 버튼 클릭 시
         binding.btCheckEmail.setOnClickListener {
-            val email = binding.etEmail.text.toString()
+            val email = binding.etEmail.text.toString().trim()
+
             if (email.isBlank()) {
                 Toast.makeText(requireContext(), "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(requireContext(), "올바른 이메일 형식이 아닙니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             authViewModel.checkEmailDuplication(email)
+
+
         }
 
         // ✅ 회원가입 버튼 클릭 시

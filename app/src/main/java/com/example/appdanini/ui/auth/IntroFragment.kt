@@ -10,7 +10,8 @@ import com.example.appdanini.databinding.FragmentIntroBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class IntroFragment : Fragment() {
+class
+IntroFragment : Fragment() {
     private var _binding: FragmentIntroBinding? = null
     private val binding get() = _binding!! // null이면 안돼!
 

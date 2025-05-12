@@ -34,10 +34,10 @@ class ResultFragment : Fragment(){
         val personalScore = tokenManager.getPersonalScore()
         val groupScore = tokenManager.getGroupScore()
 
-        binding.tvPersonalScore.text = if (personalScore > 0) "${personalScore}점" else "--점"
-        binding.tvGroupScore.text = if (groupScore > 0) "${groupScore}점" else "--점"
 
-        binding.btHomeNext.setOnClickListener {
+        binding.tvScore.text = if (personalScore > 0) "${groupScore}점 / ${personalScore}점"  else "--점 / --점"
+
+        binding.btnHomeNext.setOnClickListener {
             findNavController().navigate(R.id.action_resultFragment_to_homeFragment)
         }
 

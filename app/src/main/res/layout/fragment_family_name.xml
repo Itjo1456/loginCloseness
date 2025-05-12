@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/back_paper"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.invite.FamilyNameFragment">
 
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBaseline_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:titleCentered="true"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:title="가족 초대"
@@ -45,9 +47,13 @@
 
     <EditText
         android:id="@+id/et_family_name"
-        android:layout_width="0dp"
+        android:layout_width="400dp"
         android:layout_height="45dp"
         android:padding="12dp"
+        android:hint="가족명"
+        android:textAppearance="@style/Small_Edit_Title"
+        android:importantForAutofill="no"
+        android:inputType="text"
         android:layout_marginTop="15dp"
         android:background="@drawable/selector_invite_link_edit_text"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +63,7 @@
     <Button
         android:id="@+id/bt_name_chk"
         style="@style/Button_Title"
-        android:layout_width="300dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:background="@drawable/button_background_intro"
         android:text="가족 코드 발급"

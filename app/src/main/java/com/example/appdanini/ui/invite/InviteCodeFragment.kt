@@ -39,7 +39,7 @@ class InviteCodeFragment : Fragment() {
         }
 
         // 🔥 초대코드 표시
-        val inviteCode = tokenManager.getInviteCode()
+        val inviteCode = tokenManager.getInviteCode() // repository에 저장된 invite 코드
         binding.etInviteLink.setText(inviteCode)
         binding.etInviteLink.isFocusable = false
         binding.etInviteLink.isClickable = false

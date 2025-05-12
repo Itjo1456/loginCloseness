@@ -12,12 +12,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.appdanini.R
 import com.example.appdanini.databinding.FragmentClosenessBinding
+import com.example.appdanini.util.TokenManager
 import com.example.appdanini.viewmodel.ClosenessViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ClosenessFragment : Fragment() {
 
+    @Inject
+    lateinit var tokenManager: TokenManager
     private var _binding: FragmentClosenessBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ClosenessViewModel by viewModels()
@@ -55,9 +59,11 @@ class ClosenessFragment : Fragment() {
             binding.tvQuestionNumber.text = "Q${index + 1}."
         }
 
-        // ✅ 점수 수신 완료 시 결과 화면으로 이동
+        // ✅ 점수 수신 완료 시 초기 설정 저장 → 결과 화면으로 이동
         viewModel.resultReady.observe(viewLifecycleOwner) { ready ->
             if (ready == true) {
+                tokenManager.markTestCompleted()
+                tokenManager.markInitialSetupDone()
                 findNavController().navigate(R.id.action_closenessFragment_to_resultFragment)
             }
         }

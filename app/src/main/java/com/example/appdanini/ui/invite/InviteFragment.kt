@@ -23,6 +23,8 @@ class InviteFragment : Fragment() {
 
     @Inject lateinit var tokenManager: TokenManager
 
+    private var currentInviteCode: String? = null // ✅ 추가
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,12 +44,21 @@ class InviteFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            currentInviteCode = inviteCode  // ✅ 저장
             authViewModel.transferInviteCode(inviteCode)
         }
 
+        // ui에 라이브 데이터를 띄우고 싶으면 observe로 관찰해야함
         authViewModel.transferInviteCodeResult.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                tokenManager.markInviteCodeSubmitted()
+                currentInviteCode?.let { code ->
+                    // 초대 코드를 제출 했음을 체크
+                    // loginfragment에서의 분기점
+                    tokenManager.markInviteCodeSubmitted()
+                    // 이때 저장한 초대 코드가 splshAcitivity의 분기점
+                    tokenManager.saveInviteCode(code)
+                }
+
                 Toast.makeText(requireContext(), "초대 코드가 정상적으로 처리되었습니다.", Toast.LENGTH_SHORT).show()
                 val action = InviteFragmentDirections.actionInviteFragmentToWaitInviteFragment()
                 findNavController().navigate(action)
@@ -67,6 +78,3 @@ class InviteFragment : Fragment() {
         _binding = null
     }
 }
-
-
-

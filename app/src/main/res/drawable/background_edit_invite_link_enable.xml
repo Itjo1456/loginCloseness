@@ -7,7 +7,7 @@
     <!-- 선 색상과 굵기 -->
     <stroke
         android:width="2dp"
-        android:color="@color/gray400" />
+        android:color="@color/black" />
 
     <solid android:color="@color/white" />
 </shape>

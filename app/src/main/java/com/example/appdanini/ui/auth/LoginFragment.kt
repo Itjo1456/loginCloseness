@@ -71,7 +71,7 @@ class LoginFragment : Fragment() {
                         val action = LoginFragmentDirections.actionLoginFragmentToInviteFragment()
                         findNavController().navigate(action)
                     } else {
-                        // 초대 코드 제출했으면 서버 상태 확인
+                        // 초대 코드 제출했으면 서버 상태 확인0
                         checkInviteStatusAndNavigate()
                     }
                 }
@@ -81,13 +81,6 @@ class LoginFragment : Fragment() {
             }
         }
 
-        authViewModel.shouldForceLogout.observe(viewLifecycleOwner) { shouldLogout ->
-            if (shouldLogout) {
-                Toast.makeText(requireContext(), "세션이 만료되었습니다. 다시 로그인해주세요.", Toast.LENGTH_LONG).show()
-                tokenManager.clearTokens()
-                authViewModel.clearForceLogoutFlag()
-            }
-        }
     }
 
     private fun checkInviteStatusAndNavigate() {
@@ -97,16 +90,16 @@ class LoginFragment : Fragment() {
                 val status = response?.status
 
                 when (status) {
-                    "accepted" -> {
+                    "APPROVED" -> {
                         val action = LoginFragmentDirections.actionLoginFragmentToClosenessFragment()
                         findNavController().navigate(action)
                     }
-                    "rejected" -> {
+                    "REJECTED" -> {
                         Toast.makeText(requireContext(), "초대가 거절되었습니다. 다시 가입해 주세요.", Toast.LENGTH_SHORT).show()
                         val action = LoginFragmentDirections.actionLoginFragmentToInviteFragment()
                         findNavController().navigate(action)
                     }
-                    "pending", null -> {
+                    "PENDING", null -> {
                         val action = LoginFragmentDirections.actionLoginFragmentToWaitInviteFragment()
                         findNavController().navigate(action)
                     }

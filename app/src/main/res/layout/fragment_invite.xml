@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
     tools:context=".ui.invite.InviteFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -13,18 +12,20 @@
         android:layout_height="wrap_content"
         app:layout_constraintBaseline_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:titleCentered="true"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:navigationIcon="@drawable/ic_left_arrow"
         app:title="가족 초대"
         app:titleTextAppearance="@style/Toolbar_title"
-        tools:layout_editor_absoluteY="-7dp" />
+        tools:layout_editor_absoluteY="-5dp" />
 
     <TextView
         android:id="@+id/tv_small_family_logo1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="가족 초대"
-        style="@style/Top_bold_title"
+        android:text="가족 그룹 생성"
+        style="@style/Intro_middle_Title"
         android:layout_marginTop="10dp"
         android:layout_marginStart="12dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,8 +36,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="가족을 초대하여\n그룹을 형성하세요!"
-
-       style="@style/Top_gray_right"
+        style="@style/Top_detail"
         android:layout_marginTop="8dp"
         android:layout_marginStart="12dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,8 +48,8 @@
         android:id="@+id/tv_very_small_family_logo1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="초대코드"
-        style="@style/Very_small_logo"
+        style="@style/Mini_title"
+        android:text="초대 코드"
         android:layout_marginTop="20dp"
         android:layout_marginStart="12dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +71,10 @@
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:padding="12dp"
+            android:hint="초대 코드"
+            android:textAppearance="@style/Small_Edit_Title"
+            android:importantForAutofill="no"
+            android:inputType="text"
             android:background="@drawable/selector_invite_link_edit_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -99,11 +103,11 @@
 
     <TextView
         android:id="@+id/tv_gray_family_ex2"
-        style="@style/Top_gray_right"
+        style="@style/Top_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:text="아직 가족 그룹이 없으신가요?\n초대 코드를 생성하여 가족 그룹을 만들어주세요!"
         app:layout_constraintTop_toBottomOf="@+id/cl_constraint"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,17 +118,14 @@
     <Button
         android:id="@+id/bt_invite_chk"
         style="@style/Button_Title"
-        android:layout_width="300dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/button_background_intro"
         android:text="가족 그룹 생성"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.426"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_gray_family_ex2"
-        app:layout_constraintVertical_bias="0.051" />
+        app:layout_constraintTop_toBottomOf="@id/tv_gray_family_ex2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

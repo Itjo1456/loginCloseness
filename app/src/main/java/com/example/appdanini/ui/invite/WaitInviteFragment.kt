@@ -1,6 +1,7 @@
 package com.example.appdanini.ui.invite
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class WaitInviteFragment : Fragment() {
@@ -47,7 +49,6 @@ class WaitInviteFragment : Fragment() {
 
         val toolbar: Toolbar = binding.toolbarInvite1
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
-
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
@@ -60,25 +61,46 @@ class WaitInviteFragment : Fragment() {
             while (isActive) {
                 try {
                     val response = authViewModel.checkInviteStatus()
-                    if (response != null) {
-                        when (response.status) {
-                            "accepted" -> {
-                                response.group_Id?.let {
-                                    tokenManager.saveGroupId(it) // 수정된 부분
-                                }
-                                navigateToSuccessPage()
-                                break
+                    response?.let {
+                        Log.d("InvitePolling", "응답: status=${it.status}, request_id=${it.request_id}, group_id=${it.group_id}")
 
+                        when (it.status?.uppercase()) {
+                            "APPROVED" -> {
+                                tokenManager.saveRequestCode(it.request_id.toString())
+
+                                // ✅ group_id null 체크 후 저장
+                                if (it.group_id != null) {
+                                    tokenManager.saveGroupId(it.group_id)
+                                    Log.d("InvitePolling", "group_id 저장 완료: ${it.group_id}")
+                                } else {
+                                    Log.e("InvitePolling", "group_id가 null입니다. 저장하지 않음.")
+                                }
+
+                                navigateToSuccessPage()
+                                return@launch
                             }
-                            "rejected" -> {
+
+                            "REJECT" -> {
                                 showRejectedDialog()
-                                break
+                                return@launch
+                            }
+
+                            "PENDING" -> {
+                                // 대기 중 메시지나 상태 갱신 가능
+                            }
+
+                            else -> {
+                                Log.w("InvitePolling", "Unknown status: ${it.status}")
                             }
                         }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(requireContext(), "서버 연결이 불안정합니다. 다시 시도 중...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "서버 연결이 불안정합니다. 다시 시도 중...",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 delay(5000)
             }
@@ -106,6 +128,6 @@ class WaitInviteFragment : Fragment() {
         pollingJob?.cancel()
         _binding = null
     }
-}
 
+}
 

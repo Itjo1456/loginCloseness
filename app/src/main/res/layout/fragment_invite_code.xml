@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
     tools:context=".ui.invite.InviteCodeFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -14,6 +13,7 @@
         app:layout_constraintBaseline_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:titleCentered="true"
         app:layout_constraintStart_toStartOf="parent"
         app:title="가족 초대"
         app:titleTextAppearance="@style/Toolbar_title"
@@ -24,8 +24,8 @@
         android:id="@+id/tv_small_family_invite_logo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        style="@style/Mini_title"
         android:text="초대 코드"
-        style="@style/Top_bold_title"
         android:layout_marginTop="10dp"
         android:layout_marginStart="12dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_constraint"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginTop="5dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
@@ -74,13 +74,13 @@
 
     <Button
         android:id="@+id/bt_next"
-        style="@style/Button_Title"
-        android:layout_width="300dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_background_intro"
+        style="@style/Button_Title"
         android:layout_marginTop="35dp"
         android:layout_marginBottom="15dp"
-        android:background="@drawable/button_background_intro"
-        android:text="확 인"
+        android:text="확인"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_constraint"/>

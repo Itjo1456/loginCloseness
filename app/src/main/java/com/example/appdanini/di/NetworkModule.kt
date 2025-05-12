@@ -3,6 +3,8 @@ package com.example.appdanini.di
 import com.example.appdanini.util.TokenManager
 import com.example.appdanini.data.model.remote.api.AuthApi
 import com.example.appdanini.data.model.remote.api.ClosenessApi
+import com.example.appdanini.data.model.remote.api.DiaryApi
+import com.example.appdanini.data.model.repository.DiaryRepository
 import com.example.appdanini.util.AuthInterceptor
 import com.example.appdanini.util.TokenAuthenticator
 import dagger.Module
@@ -70,7 +72,20 @@ object NetworkModule {
         return retrofit.create(ClosenessApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideDiaryApi(retrofit: Retrofit): DiaryApi {
+        return retrofit.create(DiaryApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDiaryRepository(diaryApi: DiaryApi): DiaryRepository {
+        return DiaryRepository(diaryApi)
+    }
 }
+
+
 
 
 

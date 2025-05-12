@@ -9,6 +9,7 @@ import com.example.appdanini.data.model.request.invite.TransferInviteRequest
 import com.example.appdanini.data.model.request.auth.EmailCheckRequest
 import com.example.appdanini.data.model.request.auth.EmailCheckResponse
 import com.example.appdanini.data.model.request.auth.LoginResponse
+import com.example.appdanini.data.model.request.invite.AcceptGroupResponse
 import com.example.appdanini.data.model.request.invite.FcmTokenRequest
 import com.example.appdanini.data.model.request.invite.TransferInviteResponse
 import retrofit2.Response
@@ -17,6 +18,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -37,6 +39,7 @@ interface AuthApi {
         // # 확인
         @POST("/api/v1/users/check-email")
         suspend fun checkEmail(@Body request: EmailCheckRequest): Response<EmailCheckResponse>
+
 
         // #4 토큰 리프레시
         // # 확인
@@ -67,13 +70,15 @@ interface AuthApi {
         @GET("/api/v1/groups/request_state")
         suspend fun checkInviteStatus(): Response<TransferInviteResponse>
 
-
-
+        // fcm 메세지를 이용하면 request_id를 받고, 보내주는 것도 가능함.
 
         // #8 공유자 가입 수락
         @Headers("Need-Auth: true")
-        @POST("/api/v1/groups/accept")
-        suspend fun acceptGroup(@Body req: AcceptGroupRequest): Response<Unit>
+        @POST("/api/v1/groups/accept/{requestId}")
+        suspend fun acceptGroup(
+                @Path("request_id") requestId: Int,
+                @Body request: AcceptGroupRequest
+        ): Response<AcceptGroupResponse>
 
         // #9 디바이스 토큰 등록
         @Headers("Need-Auth: true")

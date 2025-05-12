@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/back_paper"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.auth.IntroFragment">
 
@@ -22,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="반갑습니다"
         style="@style/Intro_middle_Title"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="250dp"
         app:layout_constraintTop_toBottomOf="@+id/iv_intro_picture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -30,9 +31,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="오늘의 일상을 가족들과 공유해보세요.\n 서로를 더 잘 이해할 수 있습니다."
         style="@style/Top_detail"
-        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_intro_middle_logo"/>
@@ -44,7 +45,7 @@
         style="@style/Button_Title"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="70dp"
         android:background="@drawable/button_background_intro"
         android:text="로그인"
         app:layout_constraintTop_toBottomOf="@id/tv_intro_middle_logo"

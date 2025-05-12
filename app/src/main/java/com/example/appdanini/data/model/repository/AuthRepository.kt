@@ -11,6 +11,8 @@ import com.example.appdanini.data.model.request.invite.TransferInviteRequest
 import com.example.appdanini.data.model.request.auth.EmailCheckRequest
 import com.example.appdanini.data.model.request.invite.FcmTokenRequest
 import com.example.appdanini.data.model.request.invite.InviteCodeResponse
+import com.example.appdanini.data.model.request.invite.TransferInviteResponse
+import retrofit2.Response
 import javax.inject.Inject
 
 
@@ -59,6 +61,17 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    suspend fun refreshAccessToken(refreshToken: String): Response<Unit>? {
+        return try {
+            authApi.refreshAccessToken("Bearer $refreshToken")
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "토큰 갱신 실패: ${e.localizedMessage}")
+            null
+        }
+    }
+
+
+
     suspend fun checkEmailDuplication(email: String): Boolean? {
         return try {
             val response = authApi.checkEmail(EmailCheckRequest(email))
@@ -74,65 +87,100 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    fun checkForceLogout(): Boolean {
-        val accessToken = tokenManager.getAccessToken()
-        val forceLogoutFlag = tokenManager.shouldForceLogout()
-
-        val result = accessToken.isNullOrEmpty() || forceLogoutFlag
-        Log.d("AuthRepository", "checkForceLogout 결과: $result")
-        return result
-    }
-
-
     // AuthRepository.kt 내부에 추가
     // 최초 생성자의 가족 group_id와 초대 코드가 여기서 저장
-    suspend fun requestInviteCode(group_name: String): InviteCodeResponse? {
+    suspend fun requestInviteCode(groupName: String): InviteCodeResponse? {
         return try {
-            val response = authApi.requestInviteCode(InviteCodeRequest(group_name))
+            val response = authApi.requestInviteCode(InviteCodeRequest(groupName))
             if (response.isSuccessful) {
-                response.body()?.also { result ->
-                    tokenManager.saveGroupId(result.group_id) // 수정됨
+                response.body()?.let { result ->
+                    // 서버가 내려준 group_id는 생성자 측에서만 저장
+                    tokenManager.saveGroupId(result.group_id)
                     tokenManager.saveInviteCode(result.inviteCode)
+                    result
                 }
             } else {
+                Log.e(
+                    "AuthRepository",
+                    "requestInviteCode failed: code=${response.code()} message=${response.message()}"
+                )
                 null
             }
         } catch (e: Exception) {
+            Log.e("AuthRepository", "requestInviteCode exception: ${e.localizedMessage}")
             null
         }
-
-
     }
+
 
 
     // 실제 API 호출 + 성공 여부 판단
     suspend fun transferInviteCode(inviteCode: String): Boolean {
         return try {
             val response = authApi.transferInviteCode(TransferInviteRequest(inviteCode))
-            response.isSuccessful // 결과를 Boolean으로
+            // 1) HTTP 상태 코드 검사
+            if (!response.isSuccessful) {
+                Log.e(
+                    "AuthRepository",
+                    "transferInviteCode failed: code=${response.code()} message=${response.message()}"
+                )
+                return false
+            }
+            // 2) 응답 바디가 있을 때만 request_id 저장하고 true 반환
+            // 일단 저장은 해두자. 보내 주는 이유가 있을 거임.
+            response.body()?.let { result ->
+                true
+            } ?: run {
+                Log.e("AuthRepository", "transferInviteCode: response body is null")
+                false
+            }
         } catch (e: Exception) {
+            Log.e("AuthRepository", "transferInviteCode exception: ${e.localizedMessage}", e)
             false
         }
     }
 
-    suspend fun checkInviteStatus(request: CheckInviteStatusRequest): CheckInviteStatusResponse? {
+    // 폴링 상태 체크
+    // 상태 체크 후
+    suspend fun checkInviteStatus(): TransferInviteResponse? {
         return try {
-            val response = authApi.checkInviteStatus(request)
-            if (response.isSuccessful) response.body() else null
+            val response = authApi.checkInviteStatus()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e(
+                    "AuthRepository",
+                    "checkInviteStatus failed: code=${response.code()} message=${response.message()}"
+                )
+                null
+            }
         } catch (e: Exception) {
             Log.e("AuthRepository", "checkInviteStatus error", e)
             null
         }
     }
 
-    suspend fun acceptGroup(request: AcceptGroupRequest): Boolean {
+
+    suspend fun acceptGroup(requestId: Int, isAccepted: Boolean): Boolean {
         return try {
-            val response = authApi.acceptGroup(request)
-            response.isSuccessful
+            val status = if (isAccepted) "ACCEPT" else "REJECT"
+            val request = AcceptGroupRequest(status)
+            val response = authApi.acceptGroup(requestId, request)
+
+            if (response.isSuccessful) {
+                val body = response.body()
+                Log.d("AuthRepository", "수락 결과: request_id=${body?.request_id}, 시간=${body?.updated_at}")
+                true
+            } else {
+                Log.e("AuthRepository", "초대 응답 실패: ${response.code()} ${response.message()}")
+                false
+            }
         } catch (e: Exception) {
+            Log.e("AuthRepository", "초대 응답 예외: ${e.localizedMessage}", e)
             false
         }
     }
+
 
     suspend fun registerDeviceToken(fcmToken: String) {
         try {

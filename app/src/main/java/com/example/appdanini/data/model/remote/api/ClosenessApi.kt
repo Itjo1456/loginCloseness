@@ -4,18 +4,20 @@ import com.example.appdanini.data.model.request.closeness.ClosenessAnswerRequest
 import com.example.appdanini.data.model.request.closeness.ClosenessScoreResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 //Retrofit 통신용 API가 아니라 "Repository랑 ViewModel 연결하기 위한 추상 인터페이스" 였어
 
 interface ClosenessApi {
+    @Headers("Need-Auth: true")
     @POST("/api/v1/tests/answers")
     suspend fun submitAnswers(
         @Body request: ClosenessAnswerRequest
-    ): Response<ClosenessScoreResponse>
-}
+    ): Response<Unit>
 
-//
-//서버로 답변 목록을 한 번에 제출하는 기능만 존재.
-//Retrofit2 방식으로 API를 정의했어.
-//요청 본문은 ClosenessAnswerRequest 형태이고, 응답은 ClosenessScoreResponse(= 점수).
+    @Headers("Need-Auth: true")
+    @GET("/api/v1/closeness/score")
+    suspend fun getClosenessScores(): Response<ClosenessScoreResponse>
+}

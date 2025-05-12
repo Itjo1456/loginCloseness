@@ -21,7 +21,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val type = remoteMessage.data["type"]
         if (type == "invite_request") {
-            val inviteRequestId = remoteMessage.data["invite_request_id"] ?: return
+            val inviteRequestId = remoteMessage.data["request_id"] ?: return
             val senderName = remoteMessage.data["sender_name"] ?: "상대방"
             showInvitePopup(inviteRequestId, senderName)
         }

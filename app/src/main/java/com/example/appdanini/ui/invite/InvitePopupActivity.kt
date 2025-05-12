@@ -42,20 +42,19 @@ class InvitePopupActivity : AppCompatActivity() {
         tvMessage.text = "$senderName 님의 초대를 수락하시겠습니까?"
 
         btnAccept.setOnClickListener {
-            handleInviteResponse(true, inviteRequestId)
+            handleInviteResponse(true)
         }
 
         btnReject.setOnClickListener {
-            handleInviteResponse(false, inviteRequestId)
+            handleInviteResponse(false)
         }
     }
 
-    private fun handleInviteResponse(isAccepted: Boolean, inviteRequestId: Int) {
+    private fun handleInviteResponse(isAccepted: Boolean) {
         lifecycleScope.launch {
-            val success = authViewModel.acceptGroup(inviteRequestId.toString(), isAccepted)
+            val success = authViewModel.acceptGroup(isAccepted, inviteRequestId)
             if (!success) {
-                Toast.makeText(this@InvitePopupActivity, "요청 처리에 실패했습니다.", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this@InvitePopupActivity, "요청 처리에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
             finish()
         }

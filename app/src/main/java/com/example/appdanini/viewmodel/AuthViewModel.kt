@@ -8,7 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.appdanini.util.TokenManager
 import com.example.appdanini.data.model.repository.AuthRepository
 import com.example.appdanini.data.model.request.invite.AcceptGroupRequest
+import com.example.appdanini.data.model.request.invite.TransferInviteResponse
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -42,71 +46,118 @@ class AuthViewModel @Inject constructor(
     private val _transferInviteCodeResult = MutableLiveData<Boolean>()
     val transferInviteCodeResult: LiveData<Boolean> = _transferInviteCodeResult
 
+    private val _inviteStatus = MutableLiveData<TransferInviteResponse?>()
+    val inviteStatus: LiveData<TransferInviteResponse?> get() = _inviteStatus
     init {
         _shouldForceLogout.value = authRepository.shouldForceLogout()
     }
 
+    private var monitoringJob: Job? = null
+
     // ✅ 로그인
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            val success = authRepository.loginAndGetResponse(email, password)
-            _loginResult.value = success
+            try {
+                val success = authRepository.loginAndGetResponse(email, password)
+                _loginResult.value = success
+
+                if (success) {
+                    // 로그인 성공 후 FCM 토큰 전송
+                    FirebaseMessaging.getInstance().token
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val token = task.result
+                                registerDeviceToken(token)
+                            } else {
+                                Log.e("AuthViewModel", "FCM 토큰 가져오기 실패: ${task.exception}")
+                            }
+                        }
+                }
+
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "login exception: ${e.localizedMessage}", e)
+                _loginResult.value = false
+            }
         }
     }
+
 
     // ✅ 회원가입
     fun signup(name: String, email: String, password: String) {
         viewModelScope.launch {
-            val success = authRepository.signupAndGetResponse(name, email, password)
-            _signupResult.value = success
+            try {
+                val success = authRepository.signupAndGetResponse(name, email, password)
+                _signupResult.value = success
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "signup exception: ${e.localizedMessage}", e)
+                _signupResult.value = false
+            }
         }
     }
 
     // ✅ 이메일 중복 확인
     fun checkEmailDuplication(email: String) {
         viewModelScope.launch {
-            val result = authRepository.checkEmailDuplication(email)
-            _isEmailDuplicated.value = result
+            try {
+                val result = authRepository.checkEmailDuplication(email)
+                _isEmailDuplicated.value = result
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "checkEmailDuplication exception: ${e.localizedMessage}", e)
+                _isEmailDuplicated.value = false // 예외 발생 시 중복 아님으로 처리
+            }
         }
     }
+
+    suspend fun refreshAccessToken(refreshToken: String) =
+        try {
+            authRepository.refreshAccessToken(refreshToken)
+        } catch (e: Exception) {
+            null
+        }
 
     // ✅ 공유자가 초대 코드 요청 후 저장
     fun requestInviteCode(familyName: String) {
         viewModelScope.launch {
-            val response = authRepository.requestInviteCode(familyName)
-            _inviteCode.value = response?.inviteCode
+            try {
+                val response = authRepository.requestInviteCode(familyName)
+                val code = response?.inviteCode
+                _inviteCode.value = code
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "초대코드 요청 실패: ${e.localizedMessage}", e)
+                _inviteCode.value = null  // 실패 시 명확하게 null 처리
+            }
         }
     }
 
     // ✅ 피공유자가 초대 코드 전송
     fun transferInviteCode(inviteCode: String) {
         viewModelScope.launch {
-            val result = authRepository.transferInviteCode(inviteCode)
-            _transferInviteCodeResult.value = result
+            try {
+                val result = authRepository.transferInviteCode(inviteCode)
+                _transferInviteCodeResult.value = result
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "초대 코드 전송 실패: ${e.localizedMessage}", e)
+                _transferInviteCodeResult.value = false
+            }
         }
     }
 
     // ✅ 피공유자가 수락 여부 확인 (user 정보는 토큰으로 자동 처리됨)
-    suspend fun checkInviteStatus(): CheckInviteStatusResponse? {
+    suspend fun checkInviteStatus(): TransferInviteResponse? {
         return try {
-            val inviteCode = tokenManager.getInviteCode() ?: return null
-            val request = CheckInviteStatusRequest(inviteCode)
-            authRepository.checkInviteStatus(request)
+            val result = authRepository.checkInviteStatus()
+            _inviteStatus.value = result
+            result
         } catch (e: Exception) {
-            Log.e("InviteViewModel", "checkInviteStatus error", e)
+            _inviteStatus.value = null
             null
         }
     }
 
+
     // ✅ 공유자가 수락/거절
-    suspend fun acceptGroup(inviteId: String, isAccepted: Boolean): Boolean {
-        return try {
-            val request = AcceptGroupRequest(inviteId.toString(), isAccepted)
-            authRepository.acceptGroup(request)
-        } catch (e: Exception) {
-            Log.e("InviteViewModel", "acceptGroup error", e)
-            false
-        }
+    suspend fun acceptGroup(isAccepted: Boolean, requestId: Int): Boolean {
+        return authRepository.acceptGroup(requestId, isAccepted)
     }
 
     fun clearForceLogoutFlag() {
@@ -124,5 +175,19 @@ fun registerDeviceToken(fcmToken: String) {
         }
     }
 }
+
+    fun monitorForceLogout() {
+        if (monitoringJob?.isActive == true) return
+
+        monitoringJob = viewModelScope.launch {
+            while (true) {
+                if (authRepository.shouldForceLogout()) {
+                    _shouldForceLogout.postValue(true)
+                    break
+                }
+                delay(2000) // 2초마다 감시
+            }
+        }
+    }
 
 }

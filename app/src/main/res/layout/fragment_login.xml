@@ -15,6 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:titleCentered="true"
         app:title="로그인"
         app:titleTextAppearance="@style/Toolbar_title"
         tools:layout_editor_absoluteY="-7dp"
